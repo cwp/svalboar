@@ -5,7 +5,7 @@ members = [
   "layout_optimization/layout_optimization_common",
   "layout_optimization/layout_optimization_genetic",
   "layout_optimization/layout_optimization_sa",
-  "keyboard_layout_optimizer",
+  "svalboar",
 ]
 
 exclude = [

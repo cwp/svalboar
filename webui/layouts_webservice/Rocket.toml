@@ -28,7 +28,7 @@ layout_configs = [
     "../../config/keyboard/standard_qwerty_ansi.yml",
   ],
 ]
-ngrams = "../../ngrams/deu_mixed_wiki_web_0.6_eng_news_typical_wiki_web_0.4"
+ngrams = "../../ngrams/eng/eng_wiki_1m"
 secret = "super_duper_secret"
 static_dir = "static"
 

@@ -1,8 +1,8 @@
-import pandas as pd
-import matplotlib.pyplot as plt
-
-import subprocess
 import json
+import subprocess
+
+import matplotlib.pyplot as plt
+import pandas as pd
 
 if __name__ == "__main__":
     import argparse
@@ -12,17 +12,19 @@ if __name__ == "__main__":
     parser.add_argument(
         "--corpora",
         default=[
-            "ngrams/deu_mixed_wiki_web_0.6_eng_news_typical_wiki_web_0.4",
-            "ngrams/deu_wiki_0.6_eng_wiki_0.4",
-            "ngrams/deu_mixed_0.6_eng_news_typical_0.4",
-            "ngrams/deu_web_1m",
-            "ngrams/eng_web_1m",
-            "ngrams/deu_wiki_1m",
-            "ngrams/eng_wiki_1m",
-            "ngrams/deu_mixed_1m",
-            "ngrams/eng_news_typical_1m",
-            "ngrams/arne",
-            "ngrams/irc_neo",
+            "ngrams/eng/eng_wiki_1m",
+            "ngrams/eng/eng_web_1m",
+            "ngrams/eng/eng_news_typical_1m",
+            "ngrams/eng/eng_shai",
+            "ngrams/eng/oxey_english",
+            "ngrams/eng/oxey_english2",
+            "ngrams/deu/deu_web_1m",
+            "ngrams/deu/deu_mixed_1m",
+            "ngrams/deu/arne",
+            "ngrams/deu/arne_basis",
+            "ngrams/deu/arne_no_special",
+            "ngrams/deu/irc_neo",
+            "ngrams/deu/oxey_german",
         ],
         help="List of ngrams directories to compare",
     )
