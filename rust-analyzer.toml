@@ -1,0 +1,133 @@
+# Rust Analyzer configuration for Svalboar project
+
+[workspace]
+# Enable all workspace members
+members = [
+  "svalboar",
+  "keyboard_layout",
+  "layout_evaluation",
+  "layout_optimization/layout_optimization_common",
+  "layout_optimization/layout_optimization_genetic",
+  "layout_optimization/layout_optimization_sa",
+  "webui/layout_evaluation_wasm",
+  "webui/layouts_webservice",
+]
+
+[check]
+# Use clippy instead of check for better diagnostics
+command = "clippy"
+# Check all targets including tests, benches, examples
+allTargets = true
+# Enable all features when checking
+allFeatures = true
+# Extra arguments for the check command
+extraArgs = [
+  "--",
+  "-W",
+  "clippy::all",
+  "-W",
+  "clippy::pedantic",
+  "-A",
+  "clippy::module_name_repetitions",
+  "-A",
+  "clippy::missing_errors_doc",
+  "-A",
+  "clippy::missing_panics_doc",
+]
+
+[cargo]
+# Build scripts are important for this project
+buildScripts = { enable = true }
+# Enable all features by default
+features = "all"
+# Use custom target directory to avoid conflicts
+targetDir = "target/rust-analyzer"
+
+[rustfmt]
+# Use rustfmt for formatting
+enable = true
+# Override command if needed
+# command = ["rustfmt", "--edition=2021"]
+
+[procMacro]
+# Enable procedural macro expansion
+enable = true
+# Show macro expansion in hover and completion
+attributes = { enable = true }
+
+[imports]
+# Import configuration
+granularity = "module"
+prefix = "crate"
+group = true
+merge = { glob = false }
+
+[completion]
+# Completion behavior
+addCallArgumentSnippets = true
+addCallParenthesis = true
+snippets = { custom = {} }
+
+[diagnostics]
+# Enable all rust-analyzer diagnostics
+enable = true
+# Disable some noisy diagnostics
+disabled = ["unresolved-proc-macro", "macro-error"]
+# Enable experimental diagnostics
+experimental = { enable = false }
+
+[inlayHints]
+# Type hints
+typeHints = { enable = true, hideClosureInitialization = false, hideNamedConstructor = false }
+# Parameter hints
+parameterHints = { enable = true }
+# Chaining hints
+chainingHints = { enable = true }
+# Lifetime elision hints
+lifetimeElisionHints = { enable = "skip_trivial", useParameterNames = true }
+# Closure return type hints
+closureReturnTypeHints = { enable = "with_block" }
+# Reborrow hints
+reborrowHints = { enable = "mutable" }
+
+[lens]
+# Code lens configuration
+enable = true
+# Show implementations
+implementations = { enable = true }
+# Show references
+references = { enable = true, adt.enable = true, trait.enable = true, method.enable = true }
+# Show runnables
+run = { enable = true }
+# Show debug
+debug = { enable = true }
+
+[hover]
+# Hover documentation configuration
+enable = true
+# Show documentation
+documentation = { enable = true }
+# Show keywords
+keywords = { enable = true }
+
+[semanticTokens]
+# Enable semantic highlighting
+enable = true
+
+[signatureHelp]
+# Signature help configuration
+enable = true
+
+[workspace]
+symbol = {
+  search = {
+    scope = "workspace_and_dependencies",
+# Workspace symbol search configuration
+  }
+}
+
+kind = "all_symbols"
+[files]
+# File watching and exclusion
+excludeDirs = [".git", "target", "node_modules", "pkg"]
+watcher = "server"

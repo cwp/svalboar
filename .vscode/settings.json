@@ -1,0 +1,85 @@
+{
+  "rust-analyzer.cargo.features": "all",
+  "rust-analyzer.check.command": "clippy",
+  "rust-analyzer.check.extraArgs": ["--all-targets"],
+  "rust-analyzer.cargo.buildScripts.enable": true,
+  "rust-analyzer.procMacro.enable": true,
+  "rust-analyzer.imports.granularity.group": "module",
+  "rust-analyzer.imports.prefix": "crate",
+  "rust-analyzer.assist.importGranularity": "module",
+  "rust-analyzer.assist.importPrefix": "crate",
+  "rust-analyzer.inlayHints.typeHints.enable": true,
+  "rust-analyzer.inlayHints.parameterHints.enable": true,
+  "rust-analyzer.inlayHints.chainingHints.enable": true,
+  "rust-analyzer.lens.enable": true,
+  "rust-analyzer.lens.implementations.enable": true,
+  "rust-analyzer.lens.references.enable": true,
+  "rust-analyzer.lens.methodReferences.enable": true,
+  "rust-analyzer.completion.addCallArgumentSnippets": true,
+  "rust-analyzer.completion.addCallParenthesis": true,
+  "rust-analyzer.workspace.symbol.search.scope": "workspace_and_dependencies",
+  "rust-analyzer.workspace.symbol.search.kind": "all_symbols",
+  "[rust]": {
+    "editor.defaultFormatter": "rust-lang.rust-analyzer",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "explicit"
+    },
+    "editor.rulers": [100],
+    "editor.tabSize": 4,
+    "editor.insertSpaces": true
+  },
+  "[toml]": {
+    "editor.defaultFormatter": "tamasfe.even-better-toml",
+    "editor.formatOnSave": true,
+    "editor.tabSize": 2
+  },
+  "[yaml]": {
+    "editor.defaultFormatter": "redhat.vscode-yaml",
+    "editor.formatOnSave": true,
+    "editor.tabSize": 2
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "editor.tabSize": 2
+  },
+  "files.associations": {
+    "*.yml": "yaml",
+    "deny.toml": "toml",
+    "justfile": "just"
+  },
+  "files.watcherExclude": {
+    "**/target/**": true,
+    "**/pkg/**": true,
+    "**/node_modules/**": true,
+    "**/.git/objects/**": true,
+    "**/.git/subtree-cache/**": true
+  },
+  "search.exclude": {
+    "**/target": true,
+    "**/Cargo.lock": true,
+    "**/pkg": true
+  },
+  "emmet.includeLanguages": {
+    "rust": "html"
+  },
+  "cSpell.words": [
+    "svalboar",
+    "dario",
+    "goetz",
+    "bigrams",
+    "trigrams",
+    "ngrams",
+    "ahash",
+    "rayon",
+    "itertools",
+    "clap",
+    "serde",
+    "anyhow",
+    "thiserror",
+    "wasm",
+    "bindgen",
+    "webassembly"
+  ]
+}

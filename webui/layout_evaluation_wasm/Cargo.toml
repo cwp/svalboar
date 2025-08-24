@@ -1,49 +1,48 @@
 [package]
-authors = ["Dario Götz <dario.goetz@googlemail.com>"]
-edition = "2018"
-license = "GPL-3.0-or-later"
 name = "layout_evaluation_wasm"
-rust-version = "1.60"
-version = "0.1.0"
+version = "0.2.0"
+authors = ["Dario Götz <dario.goetz@googlemail.com>"]
+edition = "2021"
+license = "GPL-3.0-or-later"
+rust-version = "1.75"
+description = "WebAssembly bindings for keyboard layout evaluation"
+homepage = "https://github.com/dariogoetz/keyboard_layout_optimizer"
+repository = "https://github.com/dariogoetz/keyboard_layout_optimizer"
+categories = ["wasm", "web-programming"]
+keywords = ["keyboard", "layout", "wasm", "webassembly", "evaluation"]
 
 [lib]
-crate-type = ["cdylib", "rlib"]
-
-[features]
-default = ["console_error_panic_hook"]
+crate-type = ["cdylib"]
 
 [dependencies]
+# Workspace dependencies
 keyboard_layout = { path = "../../keyboard_layout" }
 layout_evaluation = { path = "../../layout_evaluation" }
-layout_optimization_common = { path = "../../layout_optimization/layout_optimization_common" }
-layout_optimization_genetic = { path = "../../layout_optimization/layout_optimization_genetic" }
-layout_optimization_sa = { path = "../../layout_optimization/layout_optimization_sa" }
 
-instant = { version = "0.1.12", features = ["wasm-bindgen"] }
-js-sys = "0.3.56"
-serde = { version = "1.0", features = ["derive"] }
-serde_yaml = "0.8.23"
-wasm-bindgen = { version = "=0.2.82", features = ["serde-serialize"] }
+# External dependencies using workspace versions
+serde = { workspace = true }
+serde_json = { workspace = true }
+log = { workspace = true }
 
-argmin = "0.7.0"
-genevo = { version = "0.7.0", features = ["wasm-bindgen"] }
+# WebAssembly specific dependencies
+wasm-bindgen = "0.2"
+js-sys = "0.3"
+web-sys = "0.3"
+console_error_panic_hook = "0.1"
+wee_alloc = "0.4"
 
-# The `console_error_panic_hook` crate provides better debugging of panics by
-# logging them with `console.error`. This is great for development, but requires
-# all the `std::fmt` and `std::panicking` infrastructure, so isn't great for
-# code size when deploying.
-console_error_panic_hook = { version = "*", optional = true }
+# For better error messages in wasm
+getrandom = { version = "0.2", features = ["js"] }
 
-# `wee_alloc` is a tiny allocator for wasm that is only ~1K in code size
-# compared to the default allocator's ~10K. It is slower than the default
-# allocator, however.
-#
-# Unfortunately, `wee_alloc` requires nightly Rust when targeting wasm for now.
-wee_alloc = { version = "*", optional = true }
+[dependencies.web-sys]
+version = "0.3"
+features = ["console", "Document", "Element", "HtmlElement", "Window"]
 
 [dev-dependencies]
-wasm-bindgen-test = "*"
+wasm-bindgen-test = "0.3"
 
+# Optimize for size in release builds
 [profile.release]
-# Tell `rustc` to optimize for small code size.
 opt-level = "s"
+debug = false
+lto = true

@@ -1,24 +1,38 @@
 [package]
-authors = ["Dario Götz <dario.goetz@googlemail.com>"]
-edition = "2018"
-license = "GPL-3.0-or-later"
 name = "layout_optimization_genetic"
-rust-version = "1.60"
-version = "0.1.0"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+version = "0.2.0"
+authors = ["Dario Götz <dario.goetz@googlemail.com>"]
+edition = "2021"
+license = "GPL-3.0-or-later"
+rust-version = "1.75"
+description = "Genetic algorithm implementation for keyboard layout optimization"
+homepage = "https://github.com/dariogoetz/keyboard_layout_optimizer"
+repository = "https://github.com/dariogoetz/keyboard_layout_optimizer"
+categories = ["algorithms", "science"]
+keywords = [
+  "keyboard",
+  "layout",
+  "genetic-algorithm",
+  "optimization",
+  "evolutionary",
+]
 
 [dependencies]
+# Workspace dependencies
 keyboard_layout = { path = "../../keyboard_layout" }
 layout_evaluation = { path = "../../layout_evaluation" }
 layout_optimization_common = { path = "../layout_optimization_common" }
 
-ahash = "0.7.6"
-anyhow = "1.0.65"
-colored = "2.0.0"
-env_logger = "0.9.1"
-genevo = "0.7.0"
-log = "0.4.17"
-rand = "0.8.4"
-serde = { version = "1.0", features = ["derive"] }
-serde_yaml = "0.9.13"
+# External dependencies using workspace versions
+anyhow = { workspace = true }
+log = { workspace = true }
+rand = { workspace = true }
+rayon = { workspace = true }
+serde = { workspace = true }
+
+[dev-dependencies]
+criterion = { workspace = true }
+
+[[bench]]
+name = "genetic_benchmarks"
+harness = false

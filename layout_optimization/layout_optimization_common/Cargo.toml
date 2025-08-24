@@ -1,16 +1,30 @@
 [package]
-authors = ["Dario Götz <dario.goetz@googlemail.com>"]
-edition = "2018"
-license = "GPL-3.0-or-later"
 name = "layout_optimization_common"
-rust-version = "1.60"
-version = "0.1.0"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+version = "0.2.0"
+authors = ["Dario Götz <dario.goetz@googlemail.com>"]
+edition = "2021"
+license = "GPL-3.0-or-later"
+rust-version = "1.75"
+description = "Common utilities and types for keyboard layout optimization"
+homepage = "https://github.com/dariogoetz/keyboard_layout_optimizer"
+repository = "https://github.com/dariogoetz/keyboard_layout_optimizer"
+categories = ["algorithms", "data-structures"]
+keywords = ["keyboard", "layout", "optimization", "algorithms"]
 
 [dependencies]
+# Workspace dependencies
 keyboard_layout = { path = "../../keyboard_layout" }
 layout_evaluation = { path = "../../layout_evaluation" }
 
-ahash = "0.7.6"
-rand = "0.8.4"
+# External dependencies using workspace versions
+anyhow = { workspace = true }
+log = { workspace = true }
+rand = { workspace = true }
+serde = { workspace = true }
+
+[dev-dependencies]
+criterion = { workspace = true }
+
+[[bench]]
+name = "optimization_benchmarks"
+harness = false

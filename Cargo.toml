@@ -1,4 +1,5 @@
 [workspace]
+resolver = "2"
 members = [
   "keyboard_layout",
   "layout_evaluation",
@@ -13,6 +14,67 @@ exclude = [
   "webui/layout_evaluation_wasm",
 ]
 
+# Shared workspace dependencies
+[workspace.dependencies]
+# Core serialization and error handling
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+serde_yaml = "0.9"
+anyhow = "1.0"
+thiserror = "1.0"
+log = "0.4"
+
+# Performance and data structures
+ahash = "0.8"
+smallmap = "1.4"
+rayon = "1.10"
+itertools = "0.13"
+
+# CLI and terminal
+clap = { version = "4.5", features = ["derive"] }
+colored = "2.1"
+env_logger = "0.11"
+
+# Networking and async
+reqwest = { version = "0.12", features = ["blocking", "json"] }
+# For MUSL builds, use:
+# reqwest = { version = "0.12", features = ["blocking", "json", "rustls-tls"], default-features = false }
+
+# Utilities
+dotenv = "0.15"
+ctrlc = "3.4"
+rand = "0.8"
+
+# Template engine
+handlebars = "6.0"
+
+# Development dependencies
+criterion = { version = "0.5", features = ["html_reports"] }
+
 [profile.release]
+# Optimize for performance
 codegen-units = 1
 lto = true
+panic = "abort"
+strip = true
+
+# Optimize for size (alternative profile)
+[profile.release-small]
+inherits = "release"
+opt-level = "z"
+lto = true
+codegen-units = 1
+strip = true
+
+# Development profile with some optimizations
+[profile.dev]
+# Enable some optimizations for dependencies while keeping fast compilation for our code
+opt-level = 1
+overflow-checks = true
+
+[profile.dev.package."*"]
+opt-level = 3
+
+# Faster builds for testing
+[profile.test]
+inherits = "dev"
