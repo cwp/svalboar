@@ -29,6 +29,10 @@ log = { workspace = true }
 rand = { workspace = true }
 rayon = { workspace = true }
 serde = { workspace = true }
+rand_xoshiro = "0.6.0"
+colored.workspace = true
+argmin = "0.10.0"
+serde_yaml.workspace = true
 
 [dev-dependencies]
 criterion = { workspace = true }

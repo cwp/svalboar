@@ -8,9 +8,8 @@ use crate::sval::SvalKeyDirection;
 
 use super::BigramMetric;
 
-use ahash::AHashMap;
 use keyboard_layout::{
-    key::{Finger, FingerMap, Hand},
+    key::Finger,
     layout::{LayerKey, Layout},
 };
 
@@ -23,7 +22,7 @@ pub struct Parameters {}
 pub struct Scissoring {}
 
 impl Scissoring {
-    pub fn new(params: &Parameters) -> Self {
+    pub fn new(_params: &Parameters) -> Self {
         Self {}
     }
 }

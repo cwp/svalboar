@@ -8,7 +8,7 @@ use super::BigramMetric;
 
 use ahash::AHashMap;
 use keyboard_layout::{
-    key::{Finger, FingerMap, Hand, HandFingerMap},
+    key::{Finger, Hand, HandFingerMap},
     layout::{LayerKey, Layout},
 };
 
@@ -97,15 +97,15 @@ impl BigramMetric for MovementPattern {
         let pos1 = k1.key.matrix_position;
         let pos2 = k2.key.matrix_position;
 
-        let upwards: bool = pos2.1 < pos1.1;
-        let downwards: bool = pos2.1 > pos1.1;
+        let _upwards: bool = pos2.1 < pos1.1;
+        let _downwards: bool = pos2.1 > pos1.1;
 
         let finger_length_diff =
             self.finger_lengths.get(&h1, &f1) - self.finger_lengths.get(&h2, &f2);
-        let first_is_longer = finger_length_diff > 0.0;
-        let first_is_shorter = finger_length_diff < 0.0;
+        let _first_is_longer = finger_length_diff > 0.0;
+        let _first_is_shorter = finger_length_diff < 0.0;
 
-        let num_rows = pos1.1.abs_diff(pos2.1) as f64;
+        let _num_rows = pos1.1.abs_diff(pos2.1) as f64;
 
         let finger_switch_factor = self.finger_switch_factor.get(&h1, &f1).get(&h2, &f2);
 
@@ -114,7 +114,7 @@ impl BigramMetric for MovementPattern {
             unbalancing_factor = 1.0;
         }
 
-        let lateral_stretch_factor = 1.0
+        let _lateral_stretch_factor = 1.0
             + (f1.distance(&f2))
                 .abs_diff(k1.key.matrix_position.0.abs_diff(k2.key.matrix_position.0))
                 as f64

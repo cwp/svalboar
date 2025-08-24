@@ -1,7 +1,7 @@
 //! The `metrics` module provides a trait for bigram metrics.
 use keyboard_layout::layout::{LayerKey, Layout};
 
-use ordered_float::{Float, OrderedFloat};
+use ordered_float::OrderedFloat;
 use priority_queue::DoublePriorityQueue;
 use std::{env, fmt};
 
@@ -119,7 +119,7 @@ pub trait BigramMetric: Send + Sync + BigramMetricClone + fmt::Debug {
                 msgs.push(format!("Worst: {}", worst_msgs.join(", ")))
             }
 
-            let worst_nonfixed_msgs = gen_msgs(worst_nonfixed);
+            let _worst_nonfixed_msgs = gen_msgs(worst_nonfixed);
             // if !worst_nonfixed_msgs.is_empty() {
             //     msgs.push(format!(
             //         "Worst non-fixed: {}",
