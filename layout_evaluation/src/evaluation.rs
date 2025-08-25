@@ -49,10 +49,13 @@ pub struct MetricParameters {
     pub modifier_usage: Option<WeightedParams<modifier_usage::Parameters>>,
 
     pub symmetric_handswitches: Option<WeightedParams<symmetric_handswitches::Parameters>>,
-    pub finger_repeats: Option<WeightedParams<finger_repeats::Parameters>>,
+    pub std_finger_repeats: Option<WeightedParams<std_finger_repeats::Parameters>>,
+    pub sval_finger_repeats: Option<WeightedParams<sval_finger_repeats::Parameters>>,
     pub scissoring: Option<WeightedParams<scissoring::Parameters>>,
     pub manual_bigram_penalty: Option<WeightedParams<manual_bigram_penalty::Parameters>>,
-    pub movement_pattern: Option<WeightedParams<movement_pattern::Parameters>>,
+
+    pub std_movement_pattern: Option<WeightedParams<std_movement_pattern::Parameters>>,
+    pub sval_movement_pattern: Option<WeightedParams<sval_movement_pattern::Parameters>>,
     pub no_handswitch_after_unbalancing_key:
         Option<WeightedParams<no_handswitch_after_unbalancing_key::Parameters>>,
 
@@ -149,10 +152,13 @@ impl Evaluator {
         add_metric!(unigram_metric, key_costs, KeyCost);
 
         // bigram metrics
-        add_metric!(bigram_metric, finger_repeats, FingerRepeats);
+        add_metric!(bigram_metric, std_finger_repeats, StdFingerRepeats);
+        add_metric!(bigram_metric, sval_finger_repeats, SvalFingerRepeats);
         add_metric!(bigram_metric, scissoring, Scissoring);
         add_metric!(bigram_metric, manual_bigram_penalty, ManualBigramPenalty);
-        add_metric!(bigram_metric, movement_pattern, MovementPattern);
+
+        add_metric!(bigram_metric, std_movement_pattern, StdMovementPattern);
+        add_metric!(bigram_metric, sval_movement_pattern, SvalMovementPattern);
         add_metric!(
             bigram_metric,
             no_handswitch_after_unbalancing_key,

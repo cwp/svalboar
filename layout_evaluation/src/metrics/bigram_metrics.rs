@@ -5,13 +5,16 @@ use ordered_float::OrderedFloat;
 use priority_queue::DoublePriorityQueue;
 use std::{env, fmt};
 
-pub mod finger_repeats;
+pub mod std_finger_repeats;
+pub mod sval_finger_repeats;
 pub mod kla_distance;
 pub mod kla_finger_usage;
 pub mod kla_same_finger;
 pub mod kla_same_hand;
 pub mod manual_bigram_penalty;
-pub mod movement_pattern;
+
+pub mod std_movement_pattern;
+pub mod sval_movement_pattern;
 pub mod no_handswitch_after_unbalancing_key;
 pub mod oxey_lsbs;
 pub mod oxey_sfbs;

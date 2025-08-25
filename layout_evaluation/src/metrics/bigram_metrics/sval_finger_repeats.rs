@@ -1,8 +1,8 @@
-//! The bigram metric [`FingerRepeats`] incurrs a cost for bigram that uses the same finger
-//! for different keys (thumb excluded). If the finger is the index, the cost may be multiplied
-//! with a configurable factor (usually lessening the cost).
+//! The bigram metric [`SvalFingerRepeats`] incurs a cost for bigrams that use the same finger
+//! for different keys on a Svalboard. This implementation uses directional movement evaluation
+//! specific to Svalboard's N/S/E/W/Center key clusters.
 //!
-//! *Note:* In contrast to ArneBab's version of the metric, thumbs are excluded.
+//! *Note:* This is the Svalboard-specific implementation that replaced the traditional approach.
 
 use crate::sval::SvalKeyDirection;
 
@@ -19,39 +19,33 @@ use serde::Deserialize;
 #[derive(Clone, Deserialize, Debug)]
 pub struct Parameters {
     pub finger_factors: AHashMap<Finger, f64>,
-    pub stretch_factor: f64,
-    pub curl_factor: f64,
-    pub lateral_factor: f64,
-    pub same_key_offset: f64,
-    pub thumb_bigram: f64,
+    // Svalboard-specific directional costs (currently hardcoded in implementation)
+    // TODO: Make these configurable
+    // pub center_south_factor: f64,
+    // pub center_north_factor: f64,
+    // pub inward_roll_factor: f64,
+    // pub outward_roll_factor: f64,
+    // pub wall_to_wall_lateral: f64,
+    // pub wall_to_wall_vertical: f64,
+    // pub wall_to_wall_other: f64,
 }
 
 #[derive(Clone, Debug)]
-pub struct FingerRepeats {
+pub struct SvalFingerRepeats {
     finger_factors: FingerMap<f64>,
-    stretch_factor: f64,
-    curl_factor: f64,
-    lateral_factor: f64,
-    same_key_offset: f64,
-    thumb_bigram: f64,
 }
 
-impl FingerRepeats {
+impl SvalFingerRepeats {
     pub fn new(params: &Parameters) -> Self {
         Self {
             finger_factors: FingerMap::with_hashmap(&params.finger_factors, 1.0),
-            stretch_factor: params.stretch_factor,
-            curl_factor: params.curl_factor,
-            lateral_factor: params.lateral_factor,
-            same_key_offset: params.same_key_offset,
-            thumb_bigram: params.thumb_bigram,
         }
     }
 }
 
-impl BigramMetric for FingerRepeats {
+impl BigramMetric for SvalFingerRepeats {
     fn name(&self) -> &str {
-        "Finger Repeats"
+        "Finger Repeats (Svalboard)"
     }
 
     #[inline(always)]

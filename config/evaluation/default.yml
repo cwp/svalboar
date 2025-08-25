@@ -1,3 +1,5 @@
+# Svalboad evaluation
+
 metrics:
   # layout metrics
 
@@ -153,7 +155,19 @@ metrics:
   # If both keys corresponding to a bigram belong to the same finger, a cost is counted.
   # The cost can be weighted by the individual keys and if they are performed by stretching
   # or curling the finger. Also accounted for is whether there is lateral or in-line movement.
-  finger_repeats:
+  std_finger_repeats:
+    enabled: false
+    weight: 1500.0
+    normalization:
+      type: weight_found
+      value: 1.0
+    params:
+      # Traditional keyboard parameters
+      index_finger_factor: 0.8
+      pinky_finger_factor: 1.4
+      unbalancing_factor: 2.0
+
+  sval_finger_repeats:
     enabled: true
     weight: 1500.0
     normalization:
@@ -167,20 +181,6 @@ metrics:
         Middle: 1.0
         Ring: 1.1
         Pinky: 1.4
-      # Factor applied if the repeat consists of a movement
-      # in line of the finger "outwards", i.e. by stretching the finger
-      stretch_factor: 0.75
-      # Factor applied if the repeat consists of a movement
-      # in line of the finger "inwards", i.e. by curling the finger
-      curl_factor: 0.1
-      # Factor applied if the repeat consists of a lateral movement
-      inward_lateral_factor: 0.5
-      outward_lateral_factor: 1.0
-      lateral_factor: 1.0
-      # Cost to apply if the finger repeat happens on the same key
-      # Doesn't really matter, since it's not like any layout can affect this
-      same_key_offset: 0.1
-      thumb_bigram: 1.0
 
   # Put costs on some key combinations that are hard to describe otherwise
   manual_bigram_penalty:
@@ -198,16 +198,16 @@ metrics:
       # [from_position, to_position]: weight
       matrix_positions:
         # NOTE: in contrast to ArneBab's layout, we skip one column in rows 0, 1, 2 (not in row 3)
-        [[3, 1], [2, 3]]: 1      # QWERTZ: wy
-        [[3, 2], [2, 3]]: 0.3    # QWERTZ: sy
-        [[4, 2], [3, 3]]: 0.2    # QWERTZ: dx
-        [[2, 1], [3, 3]]: 0.2    # QWERTZ: qx
-        [[2, 1], [4, 3]]: 0.1    # QWERTZ: qc
+        [[3, 1], [2, 3]]: 1 # QWERTZ: wy
+        [[3, 2], [2, 3]]: 0.3 # QWERTZ: sy
+        [[4, 2], [3, 3]]: 0.2 # QWERTZ: dx
+        [[2, 1], [3, 3]]: 0.2 # QWERTZ: qx
+        [[2, 1], [4, 3]]: 0.1 # QWERTZ: qc
 
-        [[17, 3], [13, 1]]: 0.1   # QWERTZ: -z
-        [[2, 3], [6, 1]]: 0.1    # QWERTZ: yt
+        [[17, 3], [13, 1]]: 0.1 # QWERTZ: -z
+        [[2, 3], [6, 1]]: 0.1 # QWERTZ: yt
 
-        [[2, 3], [5, 3]]: -0.01  # QWERTZ: yv
+        [[2, 3], [5, 3]]: -0.01 # QWERTZ: yv
         [[14, 3], [17, 3]]: -0.01 # QWERTZ: m-
 
         # Finger repeats on same key
@@ -219,35 +219,27 @@ metrics:
         [[17, 2], [17, 2]]: 0.3
         [[17, 3], [17, 3]]: 0.5
 
-  movement_pattern:
-    enabled: true
+  # Traditional movement pattern - disabled for Svalboard
+  std_movement_pattern:
+    enabled: false
     weight: 100.0
     normalization:
       type: weight_found
       value: 1.0
     params:
-      # from: Finger for first symbol of the bigram
-      # to: Finger for second symbol of the bigram
-      # cost: Cost to count for such a movement
       finger_switch_factor:
-        - { from: Pinky,   to: Ring,    cost: 4 }
-        - { from: Pinky,   to: Middle,  cost: 4 }
-        - { from: Pinky,   to: Index,  cost: 2 }
-
-        - { from: Ring,    to: Pinky,   cost: 6 }
-        - { from: Ring,    to: Middle,  cost: 0.5 }
-        - { from: Ring,    to: Index, cost: 0.5 }
-
-        - { from: Middle,  to: Pinky,   cost: 2 }
-        - { from: Middle,  to: Ring,    cost: 2 }
-        - { from: Middle,  to: Index, cost: 0.2 }
-
-        - { from: Index, to: Pinky,   cost: 0.1 }
-        - { from: Index, to: Ring,    cost: 0.3 }
-        - { from: Index, to: Middle,  cost: 0.9 }
-
-
-      # Finger lengths
+        - { from: Pinky, to: Ring, cost: 2 }
+        - { from: Pinky, to: Middle, cost: 3 }
+        - { from: Pinky, to: Index, cost: 1.5 }
+        - { from: Ring, to: Pinky, cost: 3 }
+        - { from: Ring, to: Middle, cost: 0.3 }
+        - { from: Ring, to: Index, cost: 0.4 }
+        - { from: Middle, to: Pinky, cost: 1.5 }
+        - { from: Middle, to: Ring, cost: 1.0 }
+        - { from: Middle, to: Index, cost: 0.2 }
+        - { from: Index, to: Pinky, cost: 0.1 }
+        - { from: Index, to: Ring, cost: 0.2 }
+        - { from: Index, to: Middle, cost: 0.5 }
       finger_lengths:
         Left:
           Pinky: 1
@@ -259,23 +251,38 @@ metrics:
           Ring: 2
           Middle: 3
           Index: 2
+      short_down_to_long_or_long_up_to_short_factor: 1.5
+      same_row_offset: 0.2
+      unbalancing_factor: 1.5
+      lateral_stretch_factor: 0.5
 
-      # If the movement is directed downwards from a short towards a long
-      # or upwards from a long towards a short finger,
-      # the cost is multiplied by this factor
-      short_down_to_long_or_long_up_to_short_factor: 1.0
+  # Svalboard movement pattern for directional keyboards
+  sval_movement_pattern:
+    enabled: true
+    weight: 100.0
+    normalization:
+      type: weight_found
+      value: 1.0
+    params:
+      # from: Finger for first symbol of the bigram
+      # to: Finger for second symbol of the bigram
+      # cost: Cost to count for such a movement
+      finger_switch_factor:
+        - { from: Pinky, to: Ring, cost: 4 }
+        - { from: Pinky, to: Middle, cost: 4 }
+        - { from: Pinky, to: Index, cost: 2 }
 
-      # The cost is multiplied by the same_row_offset plus number of crossed rows.
-      # If same_row_offset is zero, movement patterns on the same row have zero cost.
-      same_row_offset: 0.1
+        - { from: Ring, to: Pinky, cost: 6 }
+        - { from: Ring, to: Middle, cost: 0.5 }
+        - { from: Ring, to: Index, cost: 0.5 }
 
-      # If the movement involves unbalancing keys (horizontally or vertically), the corresponding
-      # unbalancing values are weighted with this factor and multiplied to the result.
-      unbalancing_factor: 2.0
+        - { from: Middle, to: Pinky, cost: 2 }
+        - { from: Middle, to: Ring, cost: 2 }
+        - { from: Middle, to: Index, cost: 0.2 }
 
-      # If a movement involves a lateral stretch (the keys are more columns apart than the fingers),
-      # (one plus) this factor is multiplied to the cost with the number of columns to stretch.
-      lateral_stretch_factor: 0.0
+        - { from: Index, to: Pinky, cost: 0.1 }
+        - { from: Index, to: Ring, cost: 0.3 }
+        - { from: Index, to: Middle, cost: 0.9 }
 
   # If no handswitch occurs after hitting an "unbalancing" key (as defined in the keyboard's layout
   # config), a cost is counted depending on how far the unbalancing takes place.
@@ -287,7 +294,6 @@ metrics:
       value: 1.0
     params:
       null: null
-
 
   # trigram metrics
 
@@ -406,7 +412,6 @@ ngrams:
     factor: 2.0
     # Bigrams with an absolute weight exceeding this threshold are considered
     total_weight_threshold: 20.0
-
 
 ngram_mapper:
   # Exclude ngrams that contain a line break, followed by a non-line-break character.

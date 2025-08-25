@@ -3,20 +3,20 @@ metrics:
 
   # Specified symbols shall be located within the leftmost "n" columns of the left hand
   shortcut_keys:
-    enabled: true
-    weight: 4.0
+    enabled: false
+    weight: 0.35
     normalization:
       type: fixed
       value: 1.0
     params:
       # symbols that shall be considered "shortcut keys"
-      shortcut_chars: cvxz
+      shortcut_chars: cvx
       cost: 1.0
       within_n_leftmost_cols: 5
 
   # Pairs of keys that shall be placed in related positions to each other
   similar_letters:
-    enabled: true
+    enabled: false
     weight: 3.0
     normalization:
       type: fixed
@@ -34,30 +34,11 @@ metrics:
             - ["a", "ä"]
             - ["o", "ö"]
             - ["u", "ü"]
-        - same_key_cost: 0.7
-          neighboring_cost: 0.7
-          same_column_cost: 0.9
-          symmetric_cost: 0.8
-          letter_pairs:
-            # Similar letters
-            - ["g", "k"]
-            - ["p", "b"]
-            - ["d", "t"]
-            - ["m", "n"]
-        - same_key_cost: 1.0
-          neighboring_cost: 0.7
-          same_column_cost: 1.0
-          symmetric_cost: 0.7
-          letter_pairs:
-            # Related shortcut-letters
-            - ["c", "v"]
-            - ["x", "v"]
-            - ["z", "y"]
 
   # Symbols of specified groups shall have the same relative location to each others.
   # Used to be called `asymmetric_keys`.
   similar_letter_groups:
-    enabled: true
+    enabled: false
     weight: 10.0
     normalization:
       type: fixed
@@ -68,38 +49,34 @@ metrics:
       # and o -> ö. Otherwise, a cost is counted.
       letter_group_pairs:
         - ["auo", "äüö"]
-        # - ["auo", "äüö"]
-        # - ["gbd", "kpt"]
-        # - ["gbdw", "kptf"]
-        # - ["sfdn", "tpbm"]
 
   # unigram metrics
 
   # Each finger's load shall be relative to the specified weights
   finger_balance:
     enabled: true
-    weight: 69.0
+    weight: 50.0
     normalization:
       type: fixed
       value: 1.0
     params:
       # Intended factors for finger load. Thumb values are ignored.
       intended_loads:
-        [Left, Pinky]: 1.0
-        [Left, Ring]: 1.6
+        [Left, Pinky]: 1.2
+        [Left, Ring]: 1.4
         [Left, Middle]: 2.0
         [Left, Index]: 2.0
         [Left, Thumb]: 2.0
         [Right, Thumb]: 2.0
         [Right, Index]: 2.0
         [Right, Middle]: 2.0
-        [Right, Ring]: 1.6
-        [Right, Pinky]: 1.0
+        [Right, Ring]: 1.4
+        [Right, Pinky]: 1.2
 
   # Each hand's load shall be close to 50%
   hand_disbalance:
     enabled: true
-    weight: 40.0
+    weight: 100.0
     normalization:
       type: fixed
       value: 1.0
@@ -109,7 +86,7 @@ metrics:
   # Each keystroke incurs a cost (defined in the keyboard's layout config)
   key_costs:
     enabled: true
-    weight: 20.0
+    weight: 60.0
     normalization:
       type: weight_found
       value: 1.0
@@ -126,6 +103,17 @@ metrics:
     params:
       null: null
 
+  modifier_usage:
+    enabled: true
+    weight: 100.0
+    normalization:
+      type: weight_found
+      value: 1.0
+    params:
+      hold_cost: 1.0
+      one_shot_cost: 0.0
+      long_press_cost: 1.0
+
   # bigram metrics
 
   # If the keys corresponding to a bigram are not symmetrical on left and right hand, a cost is
@@ -139,33 +127,46 @@ metrics:
     params:
       null: null
 
-  # If both keys corresponding to a bigram belong to the same finger, a cost is counted.
-  # The cost can be weighted by the individual keys and if they are performed by stretching
-  # or curling the finger. Also accounted for is whether there is lateral or in-line movement.
-  finger_repeats:
+  # Traditional finger repeats for conventional keyboards
+  # Uses simple multiplicative cost model with finger-specific factors
+  std_finger_repeats:
     enabled: true
-    weight: 780.0
+    weight: 1500.0
     normalization:
       type: weight_found
       value: 1.0
     params:
-      # Finger-individual weights to be multiplied with the cost
+      # Reduce cost for index finger repeats (usually easier)
+      index_finger_factor: 0.8
+      # Increase cost for pinky finger repeats (usually harder)
+      pinky_finger_factor: 1.4
+      # Factor for unbalancing keys (keys that move hand off home row)
+      unbalancing_factor: 2.0
+
+  # Svalboard-specific finger repeats - disabled for traditional keyboards
+  sval_finger_repeats:
+    enabled: false
+    weight: 1500.0
+    normalization:
+      type: weight_found
+      value: 1.0
+    params:
       finger_factors:
         Thumb: 1.2
         Index: 0.8
         Middle: 1.0
         Ring: 1.1
-        Pinky: 1.2
-      # Factor applied if the repeat consists of a movement
-      # in line of the finger "outwards", i.e. by stretching the finger
-      stretch_factor: 1.2
-      # Factor applied if the repeat consists of a movement
-      # in line of the finger "inwards", i.e. by curling the finger
-      curl_factor: 1.1
-      # Factor applied if the repeat consists of a lateral movement
-      lateral_factor: 1.5
-      # Cost to apply if the finger repeat happens on the same key
-      same_key_offset: 0.5
+        Pinky: 1.4
+
+  # Svalboard-specific metric - disabled for traditional keyboards
+  scissoring:
+    enabled: false
+    weight: 4000.0
+    normalization:
+      type: weight_found
+      value: 1.0
+    params:
+      null: null
 
   # Put costs on some key combinations that are hard to describe otherwise
   manual_bigram_penalty:
@@ -182,34 +183,15 @@ metrics:
       # the format is [column, row]
       # [from_position, to_position]: weight
       matrix_positions:
-        # NOTE: in contrast to ArneBab's layout, we skip one column in rows 0, 1, 2 (not in row 3)
-        [[3, 1], [2, 3]]: 1      # QWERTZ: wy
-        [[3, 2], [2, 3]]: 0.3    # QWERTZ: sy
-        [[4, 2], [3, 3]]: 0.2    # QWERTZ: dx
-        [[2, 1], [3, 3]]: 0.2    # QWERTZ: qx
-        [[2, 1], [4, 3]]: 0.1    # QWERTZ: qc
+        # Traditional keyboard awkward combinations
+        [[3, 1], [2, 3]]: 1 # Example: difficult reaches
+        [[3, 2], [2, 3]]: 0.3
+        [[4, 2], [3, 3]]: 0.2
 
-        [[17, 3], [13, 1]]: 0.1   # QWERTZ: -z
-        [[2, 3], [6, 1]]: 0.1    # QWERTZ: yt
-
-        [[2, 3], [5, 3]]: -0.01  # QWERTZ: yv
-        [[14, 3], [17, 3]]: -0.01 # QWERTZ: m-
-
-        # Finger repeats on same key
-        # pinkies
-        [[2, 1], [2, 1]]: 0.5
-        [[2, 2], [2, 2]]: 0.3
-        [[2, 3], [2, 3]]: 0.5
-        [[17, 1], [17, 1]]: 0.5
-        [[17, 2], [17, 2]]: 0.3
-        [[17, 3], [17, 3]]: 0.5
-
-  # Depending on which fingers of the same hand are used to hit the keys of a bigram,
-  # how many rows were crossed and in which direction the movement occurs, costs are
-  # counted.
-  movement_pattern:
+  # Traditional movement pattern for conventional keyboards
+  std_movement_pattern:
     enabled: true
-    weight: 50.0
+    weight: 100.0
     normalization:
       type: weight_found
       value: 1.0
@@ -218,37 +200,23 @@ metrics:
       # to: Finger for second symbol of the bigram
       # cost: Cost to count for such a movement
       finger_switch_factor:
-        - { from: [Left, Pinky],   to: [Left, Ring],    cost: 8 }
-        - { from: [Left, Pinky],   to: [Left, Middle],  cost: 2 }
+        - { from: Pinky, to: Ring, cost: 2 }
+        - { from: Pinky, to: Middle, cost: 3 }
+        - { from: Pinky, to: Index, cost: 1.5 }
 
-        - { from: [Left, Ring],    to: [Left, Pinky],   cost: 12 }
-        - { from: [Left, Ring],    to: [Left, Middle],  cost: 6 }
-        - { from: [Left, Ring],    to: [Left, Index], cost: 0.1 }
+        - { from: Ring, to: Pinky, cost: 3 }
+        - { from: Ring, to: Middle, cost: 0.3 }
+        - { from: Ring, to: Index, cost: 0.4 }
 
-        - { from: [Left, Middle],  to: [Left, Pinky],   cost: 3 }
-        - { from: [Left, Middle],  to: [Left, Ring],    cost: 9 }
-        - { from: [Left, Middle],  to: [Left, Index], cost: 0.6 }
+        - { from: Middle, to: Pinky, cost: 1.5 }
+        - { from: Middle, to: Ring, cost: 1.0 }
+        - { from: Middle, to: Index, cost: 0.2 }
 
-        - { from: [Left, Index], to: [Left, Pinky],   cost: 0.1 }
-        - { from: [Left, Index], to: [Left, Ring],    cost: 0.3 }
-        - { from: [Left, Index], to: [Left, Middle],  cost: 0.9 }
+        - { from: Index, to: Pinky, cost: 0.1 }
+        - { from: Index, to: Ring, cost: 0.2 }
+        - { from: Index, to: Middle, cost: 0.5 }
 
-        - { from: [Right, Pinky],   to: [Right, Ring],    cost: 8 }
-        - { from: [Right, Pinky],   to: [Right, Middle],  cost: 2 }
-
-        - { from: [Right, Ring],    to: [Right, Pinky],   cost: 12 }
-        - { from: [Right, Ring],    to: [Right, Middle],  cost: 6 }
-        - { from: [Right, Ring],    to: [Right, Index], cost: 0.1 }
-
-        - { from: [Right, Middle],  to: [Right, Pinky],   cost: 3 }
-        - { from: [Right, Middle],  to: [Right, Ring],    cost: 9 }
-        - { from: [Right, Middle],  to: [Right, Index], cost: 0.6 }
-
-        - { from: [Right, Index], to: [Right, Pinky],   cost: 0.1 }
-        - { from: [Right, Index], to: [Right, Ring],    cost: 0.3 }
-        - { from: [Right, Index], to: [Right, Middle],  cost: 0.9 }
-
-      # Finger lengths
+      # Finger lengths for traditional keyboards
       finger_lengths:
         Left:
           Pinky: 1
@@ -261,36 +229,43 @@ metrics:
           Middle: 3
           Index: 2
 
-      # If the movement is directed downwards from a short towards a long
-      # or upwards from a long towards a short finger,
-      # the cost is multiplied by this factor
-      short_down_to_long_or_long_up_to_short_factor: 2.0
+      # Traditional movement factors
+      short_down_to_long_or_long_up_to_short_factor: 1.5
+      same_row_offset: 0.2
+      unbalancing_factor: 1.5
+      lateral_stretch_factor: 0.5
 
-      # The cost is multiplied by the same_row_offset plus number of crossed rows.
-      # If same_row_offset is zero, movement patterns on the same row have zero cost.
-      same_row_offset: 0.1
-
-      # If the movement involves unbalancing keys (horizontally or vertically), the corresponding
-      # unbalancing values are weighted with this factor and multiplied to the result.
-      unbalancing_factor: 0.5
-
-      # If a movement involves a lateral stretch (the keys are more columns apart than the fingers),
-      # (one plus) this factor is multiplied to the cost with the number of columns to stretch.
-      lateral_stretch_factor: 0.0
-
-  # If no handswitch occurs after hitting an "unbalancing" key (as defined in the keyboard's layout
-  # config), a cost is counted. If the second key is unbalancing as well, an additional cost
-  # depending on the distance to the first key is added.
-  no_handswitch_after_unbalancing_key:
-    enabled: true
-    weight: 18.0
+  # Svalboard movement pattern - disabled for traditional keyboards
+  sval_movement_pattern:
+    enabled: false
+    weight: 100.0
     normalization:
       type: weight_found
       value: 1.0
     params:
-      # Additional cost factor if the second key is also unbalancing
-      unbalancing_after_unbalancing: 4
+      finger_switch_factor:
+        - { from: Pinky, to: Ring, cost: 4 }
+        - { from: Pinky, to: Middle, cost: 4 }
+        - { from: Pinky, to: Index, cost: 2 }
+        - { from: Ring, to: Pinky, cost: 6 }
+        - { from: Ring, to: Middle, cost: 0.5 }
+        - { from: Ring, to: Index, cost: 0.5 }
+        - { from: Middle, to: Pinky, cost: 2 }
+        - { from: Middle, to: Ring, cost: 2 }
+        - { from: Middle, to: Index, cost: 0.2 }
+        - { from: Index, to: Pinky, cost: 0.1 }
+        - { from: Index, to: Ring, cost: 0.3 }
+        - { from: Index, to: Middle, cost: 0.9 }
 
+  # Traditional keyboards don't have specific unbalancing key patterns like Svalboard
+  no_handswitch_after_unbalancing_key:
+    enabled: false
+    weight: 36.0
+    normalization:
+      type: weight_found
+      value: 1.0
+    params:
+      null: null
 
   # trigram metrics
 
@@ -311,32 +286,29 @@ metrics:
   # movement") or if there is a directional change.
   no_handswitch_in_trigram:
     enabled: true
-    weight: 400.0
+    weight: 200.0
     normalization:
       type: weight_found
       value: 1.0
     params:
       # Count this factor if there is a direction change in the trigram
-      factor_with_direction_change: 1.0
+      factor_with_direction_change: 2.0
       # Count this factor if there is no direction change in the trigram
-      factor_without_direction_change: 0.0
+      factor_without_direction_change: 1.0
       # Count this factor if all characters of the trigram lie on the same key
       factor_same_key: 0.0
       # Count this factor if the trigram contains at least finger repeats
-      factor_contains_finger_repeat: 1.0
+      factor_contains_finger_repeat: 2.0
       # Count this factor if the starting and end key are the same (but no finger repeat)
       factor_same_key_start_end: 0.5
       # The trigram contains the index finger at least once
       factor_contains_index: 0.5
 
   # The `secondary_bigrams` metric evaluates all bigram metrics that can be computed on individual
-  # bigrams (in particular not the finger- and hand-balance metrics) for the bigram resulting from
-  # the first and last symbol of the trigram. Depending on whether the trigram involves a
-  # handswitch or not, factors are applied. Trigrams starting with one of a list of specified
-  # symbols are excluded.
+  # bigrams for the bigram resulting from the first and last symbol of the trigram.
   secondary_bigrams:
-    enabled: true
-    weight: 0.5
+    enabled: false
+    weight: 0.1
     normalization:
       type: weight_found
       value: 1.0
@@ -347,9 +319,6 @@ metrics:
       factor_handswitch: 0.8
       # Mental pauses:
       # Exclude the trirgrams which contain a mental pause and a follow up with a non-pause symbol.
-      # These trigrams do not need to be optimized, because they're "designed" to contain a pause.
-      # Mental pauses start with one of the defined `initial_pause_indicators` and then contain
-      # some kind of whitespace.
       initial_pause_indicators: [",", "."]
 
   # If all keys corresponding to a trigram are hit by the same finger (and are all unequal), a cost
@@ -364,6 +333,7 @@ metrics:
       # Multiply by this factor for each of the bigrams that have a lateral movement
       factor_lateral_movement: 1.2
 
+  # Traditional roll metrics - less relevant for traditional keyboards than Svalboard
   trigram_rolls:
     enabled: false
     weight: 25000.0
@@ -371,10 +341,32 @@ metrics:
       type: weight_found
       value: 1.0
     params:
-      # Multiply by this factor for each of the bigrams that have a lateral movement
       factor_inward: 1.0
       factor_outward: 0.2
       exclude_rows: [3]
+
+  # Oxey metrics - disabled for traditional evaluation
+  oxey_inward_rolls:
+    enabled: false
+    weight: -2.0
+    normalization:
+      type: weight_all
+      value: 0.01
+    params:
+      exclude_thumbs: true
+      exclude_modifiers: true
+      exclude_chars: ["\n"]
+
+  oxey_outward_rolls:
+    enabled: false
+    weight: -1.0
+    normalization:
+      type: weight_all
+      value: 0.01
+    params:
+      exclude_thumbs: true
+      exclude_modifiers: true
+      exclude_chars: ["\n"]
 
 ngrams:
   # Increase the weight of bigrams that have both an absolute weight and relative weight exceed
@@ -388,7 +380,6 @@ ngrams:
     # Bigrams with an absolute weight exceeding this threshold are considered
     total_weight_threshold: 20.0
 
-
 ngram_mapper:
   # Exclude ngrams that contain a line break, followed by a non-line-break character.
   # This encodes a mental pause which usually comes after hitting the "Enter" key, before
@@ -398,7 +389,7 @@ ngram_mapper:
   # Split symbols belonging to higher layers of the layout into combinations involving modifiers
   # required to activate the layer
   split_modifiers:
-    enabled: true
+    enabled: false
     # Multiply the ngram's weight with this factor whenever the resulting ngram involves two
     # modifiers that are required for the same symbol
     same_key_mod_factor: 0.03125
